@@ -29,7 +29,7 @@ use Getopt::Std;
 use Net::Netmask; 
 
 # set base varaibles. 
-my $version = "v1.1";
+my $version = "v1.2";
 my %options = ();
 my $ipLists = "ip_lists.txt";
 my $firewall = "";
