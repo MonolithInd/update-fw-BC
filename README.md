@@ -11,7 +11,18 @@ list and then aggrigates networks where posible using
 Net::Netmask. It then inserts these IPs into a firewall.
 Currently supported is : IPFW, PF, IPTABLES, IPTABLES+IPSET
 
-1.0 FIREWALL REQUIREMENTS
+1.0 SETTING UP YOUR LISTS
+-------------------------
+Included in the package is an example file ip_lists.txt. This 
+file includes individual lines with links to ipdeny.com. Each link 
+if for a country, each file contains known IP ranges for that country. 
+The script graps each list in the text file (you can add your own from
+http://ipdeny.com/ipblocks/ jsut copy the aggrigated zones link and paste 
+it into a line in the file. By default there is Brazil, China, India, Israel,
+Romania, Russia, Turkey, Uzbekistan and the Ukrane. All on the top 10 
+hacking countries source lists.
+
+2.0 FIREWALL REQUIREMENTS
 -------------------------
 This script only makes a table and fills it with IP address blocks
 It is up to the user to have a perminent rule that points to 
@@ -87,7 +98,7 @@ better performance of the final firewall.
 
 See the following URL for details : http://daemonkeeper.net/781/mass-blocking-ip-addresses-with-ipset/
 
-2.0 SOFTWARE REQUIREMENTS
+3.0 SOFTWARE REQUIREMENTS
 -------------------------
 Script depends on Net::Netmask  and LWP::Simple install with:
 
@@ -102,7 +113,7 @@ UBUNTU:
 If using ipset (highly recommended)
 * apt-get install ipset
 
-3.0 RUNNING THE SOFTWARE 
+4.0 RUNNING THE SOFTWARE 
 ------------------------
 
 Update firewall Bad Country options:
@@ -119,13 +130,13 @@ example of running from cron daily a2 2am with IPFW
 
 * 0 2 * * * PATHTOPROGRAM/update-fw-BC.pl -q -f ipfw
 
-4.0 OTHER INFO
+5.0 OTHER INFO
 -------------- 
 * v1.0 : Basic ipfw support
 * v1.1 : Added pf and iptables support
 * v1.2 : Added ipset support
 
-5.0 DISCLAIMER
+6.0 DISCLAIMER
 --------------
 This script is provided "as is". I am in no way responsible if you use this script and it locks you out of your server on the other side of the planet, starts world war 3 or causes a global burrito shortage. 
 
