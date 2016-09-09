@@ -20,7 +20,6 @@ iptables it's either a chain or a set. See below for examples on
 how to add the block entry for your firewall package. 
 
 IPFW:
-
 Rule table default is 1. Your firewall rules shoud be of the format:
 
 ipfw -q RULENUM add deny ip from table\(1\) to any
@@ -35,7 +34,6 @@ in the script itself. Making the rule perminent
 across reboots is left as an exercise for the reader. 
 
 PF:
-
 Add following to pf.conf (default name is badcountries) :
 
 table <badcountries> persist
