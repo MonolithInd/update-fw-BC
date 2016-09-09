@@ -37,7 +37,7 @@ Add following to pf.conf (default name is badcountries) :
 
 * table \<badcountries\> persist
 * block on INTERFACE from \<badcountries\> to any
-* block on INTERFACE from any to <badcountries>
+* block on INTERFACE from any to \<badcountries\>
 
 make sure you repalce INTERFACE with your correct network interface name.
 
