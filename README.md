@@ -98,6 +98,7 @@ FREEBSD :
 UBUNTU: 
 * apt-get install libnet-netmask-perl
 * LWP is installed by default. 
+
 If using ipset (highly recommended)
 * apt-get install ipset
 
@@ -105,18 +106,18 @@ If using ipset (highly recommended)
 ------------------------
 
 Update firewall Bad Country options:
--h : This help
--v : Print version info
--q : Quiet mode, disable all standard output. Used for running from CRON.
--f : specify firewall type, can be ipfw, pf, iptables or ipset
+* -h : This help
+* -v : Print version info
+* -q : Quiet mode, disable all standard output. Used for running from CRON.
+* -f : specify firewall type, can be ipfw, pf, iptables or ipset
 
 example on Freebsd with PF:
 
-./update-fw-BC.pl -f pf
+* ./update-fw-BC.pl -f pf
 
 example of running from cron daily a2 2am with IPFW
 
-0 2 * * * PATHTOPROGRAM/update-fw-BC.pl -q -f ipfw
+* 0 2 * * * PATHTOPROGRAM/update-fw-BC.pl -q -f ipfw
 
 4.0 OTHER INFO
 -------------- 
