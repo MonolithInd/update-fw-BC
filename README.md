@@ -1,14 +1,15 @@
 # update-fw-BC
 
 update-fw-BC.pl : "Update firewall Bad Countries" This is a 
-short dirty perl script to update an IPFW to block all 
+short dirty perl script to update an firewall to block all 
 connections from countries selected by the user that are known
 for hacking. It takes one file as input in the CWD dir: 
 "ip_lists.txt" which is a file containing a link to files on
 ipdeny.com per line. For each IP list it grabs the list 
 (a list of CIDR addressed per line) Ingests them, sorts the 
 list and then aggrigates networks where posible using 
-Net::Netmask. It then inserts these IPs into a IPFW/PF/IPTABLES table.
+Net::Netmask. It then inserts these IPs into a firewall.
+Currently supported is : IPFW, PF, IPTABLES, IPTABLES+IPSET
 
 1.0 FIREWALL REQUIREMENTS
 -------------------------
