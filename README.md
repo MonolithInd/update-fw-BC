@@ -125,4 +125,8 @@ v1.1 : Added pf and iptables support
 
 v1.2 : Added ipset support
 
+5.0 DISCLAIMER
+--------------
+This script is provided "as is". I am in no way responsible if you use this script and it locks you out of your server on the other side of the planet, starts world war 3 or causes a global burrito shortage. 
+
 Written by Sebastian Kai Frost. sebastian.kai.frost@gmail.com
