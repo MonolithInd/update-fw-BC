@@ -121,11 +121,9 @@ example of running from cron daily a2 2am with IPFW
 
 4.0 OTHER INFO
 -------------- 
-v1.0 : Basic ipfw support
-
-v1.1 : Added pf and iptables support
-
-v1.2 : Added ipset support
+* v1.0 : Basic ipfw support
+* v1.1 : Added pf and iptables support
+* v1.2 : Added ipset support
 
 5.0 DISCLAIMER
 --------------
