@@ -172,22 +172,17 @@ sub progress_bar {
 }
 
 sub parseopts {
-
 	getopts("vqhf:", \%options);
-
 	if ($options{f}) {
 		$firewall = $options{f};
 	}
-
 	if ($options{q}) {
 		$quiet = 1;
 	}
-
 	if ($options{v}) {
 		print "Version : $version\n";
 		exit(0);
 	}
-
 	if ($options{h}) {
 		printusage();
 		exit(0);
