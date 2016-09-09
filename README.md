@@ -121,5 +121,5 @@ example of running from cron daily a2 2am with IPFW
 -------------- 
 v1.0 : Basic ipfw support
 v1.1 : Added pf and iptables support
-
+v1.2 : Added ipset support
 Written by Sebastian Kai Frost. sebastian.kai.frost@gmail.com
