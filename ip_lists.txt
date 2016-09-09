@@ -1,0 +1,9 @@
+http://www.ipdeny.com/ipblocks/data/aggregated/br-aggregated.zone
+http://www.ipdeny.com/ipblocks/data/aggregated/cn-aggregated.zone
+http://www.ipdeny.com/ipblocks/data/aggregated/in-aggregated.zone
+http://www.ipdeny.com/ipblocks/data/aggregated/il-aggregated.zone
+http://www.ipdeny.com/ipblocks/data/aggregated/ro-aggregated.zone
+http://www.ipdeny.com/ipblocks/data/aggregated/ru-aggregated.zone
+http://www.ipdeny.com/ipblocks/data/aggregated/tr-aggregated.zone
+http://www.ipdeny.com/ipblocks/data/aggregated/ua-aggregated.zone
+http://www.ipdeny.com/ipblocks/data/aggregated/uz-aggregated.zone
