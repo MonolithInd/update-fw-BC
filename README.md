@@ -20,9 +20,11 @@ iptables it's either a chain or a set. See below for examples on
 how to add the block entry for your firewall package. 
 
 IPFW:
+
 Rule table default is 1. Your firewall rules shoud be of the format:
 
 ipfw -q RULENUM add deny ip from table\(1\) to any
+
 ipfw -q RULENUM add deny ip from any to table\(1\)
 
 choose your own number for "RULENUM" thought I recommend
@@ -33,10 +35,13 @@ in the script itself. Making the rule perminent
 across reboots is left as an exercise for the reader. 
 
 PF:
+
 Add following to pf.conf (default name is badcountries) :
 
 table <badcountries> persist
+
 block on INTERFACE from <badcountries> to any
+
 block on INTERFACE from any to <badcountries>
 
 make sure you repalce INTERFACE with your correct network interface name.
@@ -56,6 +61,7 @@ The following syntax creates the chain, adds it to the input filter and
 sets it to deny. Default chain name is badcountries.
 
 iptables -N badcountries
+
 iptables -A INPUT -j badcountries
 
 PLEASE NOTE: Rules insertion takes a really long time on linux 
@@ -77,6 +83,7 @@ ipset create badcountries hash:net
 Then add your in and outbound rules to iptables: 
 
 iptables -A INPUT -m set --match-set badcountries src -j DROP 
+
 iptables -A OUTPUT -m set --match-set badcountries dst -j DROP
 
 It is up to the reader to make this create last across reboots. 
@@ -92,13 +99,18 @@ See the following URL for details : http://daemonkeeper.net/781/mass-blocking-ip
 Script depends on Net::Netmask  and LWP::Simple install with:
 
 FREEBSD :
+
 portmaster net-mgmt/p5-Net-Netmask
+
 portmaster www/p5-libwww
 
 UBUNTU: 
 apt-get install libnet-netmask-perl
+
 LWP is installed by default. 
+
 If using ipset (highly recommended)
+
 apt-get install ipset
 
 3.0 RUNNING THE SOFTWARE 
