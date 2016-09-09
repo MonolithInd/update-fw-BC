@@ -35,8 +35,8 @@ across reboots is left as an exercise for the reader.
 PF:
 Add following to pf.conf (default name is badcountries) :
 
-* table <badcountries> persist
-* block on INTERFACE from <badcountries> to any
+* table \<badcountries\> persist
+* block on INTERFACE from \<badcountries\> to any
 * block on INTERFACE from any to <badcountries>
 
 make sure you repalce INTERFACE with your correct network interface name.
