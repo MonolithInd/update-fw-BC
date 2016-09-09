@@ -22,8 +22,8 @@ how to add the block entry for your firewall package.
 IPFW:
 Rule table default is 1. Your firewall rules shoud be of the format:
 
-* ipfw -q RULENUM add deny ip from table\(1\) to any
-* ipfw -q RULENUM add deny ip from any to table\(1\)
+* ipfw -q RULENUM add deny ip from table\\(1\\) to any
+* ipfw -q RULENUM add deny ip from any to table\\(1\\)
 
 choose your own number for "RULENUM" thought I recommend
 00001 to makje sure it's always matched first. 
