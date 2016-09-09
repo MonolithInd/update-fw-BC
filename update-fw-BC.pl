@@ -1,4 +1,4 @@
-#!/usr/local/bin/perl -w 
+#!/usr/bin/env perl
 ###################################################################
 ###################################################################
 ## update-fw-BC.pl : "Update firewall Bad Countries" This is a 
@@ -25,6 +25,7 @@
 ##
 
 use strict;
+use warnings;
 use LWP::Simple;
 use Getopt::Std;
 use Net::Netmask; 
