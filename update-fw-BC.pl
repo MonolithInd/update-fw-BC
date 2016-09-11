@@ -32,21 +32,25 @@ use Net::Netmask;
 
 # set base varaibles. 
 my $version = "v1.2";
-my %options = ();
+# where to find the ip_lists.txt file. If running this from CRON this should be a 
+# full path to the file or it might not work.
 my $ipLists = "ip_lists.txt";
-my $firewall = "";
+# Below are the paths for IPFW, PF, iptables and ipset. These are the defaults on
+# modern systems. If yours is in another place. Adjust accordingly. 
 my $ipfwpath = "/sbin";
 my $iptablespath = "/sbin";
 my $pfpath = "/sbin";
 my $ipsetpath = "/sbin";
-# below is the table you're insertign the rules into. You must refrence 
-# this table in a rule somewhere or the script does nothing. 
+# below is the tables/chain you're inserting the rules into. You must refrence 
+# this table in a rule somewhere in yoyr firewall or the script does nothing. 
 my $ipfwtable = 1;
 my $pftable = "badcountries";
 my $iptableschain = "badcountries";
 my $quiet = 0;
+my $firewall = "";
 my $listsFH;
 my @chars = qw(| / - \ );
+my %options = ();
 my $count;
 my $row;
 my $content;
@@ -58,6 +62,7 @@ my @ipblockOBJ;
 my $ip;
 my $mask;
 
+# Lets parse our command line options. 
 parseopts();
 
 print "\n*** Update firewall Bad Country $version ***\n\n" unless ($quiet); 
@@ -75,7 +80,7 @@ print "-- Grabbing IP Lists and extracting IP blocks...\n" unless ($quiet);
 open($listsFH, '<:encoding(UTF-8)', $ipLists) or die "Could not open file '$ipLists' $!";
 
 # run through each of the URLs of IP blocks and grab them, then shove each IP block in 
-# a list. 
+# an array. 
 while ($row = <$listsFH>) {
 	chomp $row;
 	$content = get($row) or die 'Unable to get page';
@@ -88,11 +93,11 @@ close $listsFH;
 
 print "  -- Done\n" unless ($quiet);
 
-# sort the list into an ordered list. I don't specifically know that net::netmask requires 
+# sort the array into an ordered list. I don't specifically know that net::netmask requires 
 # the blocks to be adjacent to merge. But lets not risk it. 
 @ipblocks = sort(@ipblocks);
 
-# count how many networks we have to start with so we can compare with after and feel good aobut 
+# count how many networks we have to start with so we can compare with after and feel good about 
 # our efficiency.
 $beforecount = @ipblocks;
 
@@ -102,17 +107,17 @@ foreach (@ipblocks) {
 }
 
 print "-- Aggrigating networks...\n" unless ($quiet);
-# aggrigate the networks. 
+# aggrigate the networks using cidrs2cidrs 
 @ipblockOBJ = cidrs2cidrs(@ipblockOBJ);
 # count how many we have now. Look how shiny Net::Netmask is!
 $aftercount = @ipblockOBJ;
 print "  -- Done\n" unless ($quiet);
 print "  -- Networks before/after aggrigation : $beforecount/$aftercount\n" unless ($quiet);
 
-# lets go update our firewall.
+# lets finally go update our firewall.
 print "-- Updateing firewall...\n" unless ($quiet);
 
-#flush out the old list.
+# flush out the old list.
 print "  -- Flushing old rules...\n" unless ($quiet);
 if ($firewall eq "ipfw") {
 	system "$ipfwpath/ipfw table $ipfwtable flush";
@@ -130,7 +135,7 @@ print "  -- Done\n" unless ($quiet);
 
 # go through and put in the new rules. Lets give the user a nice progress bar to go with it
 # as this can take a long time. Also a spinning wheel so if they manage to firewall themselves
-# out they will see pretty quickly. 
+# out they will see this pretty quickly. 
 $count = 1;
 foreach (@ipblockOBJ) {
 	$ip = $_->base();
@@ -158,6 +163,8 @@ print "Firewall Update Complete\n" unless ($quiet);
 
 exit(0);
 
+### END OF MAIN SCRIPT SUBS BELOW
+
 # cute little sub I use everywhere for fancy progress bars. 
 sub progress_bar {
 	my ( $got, $total, $width, $char ) = @_;
@@ -173,6 +180,7 @@ sub progress_bar {
    	$spin++;
 }
 
+# Sub to parse command line options 
 sub parseopts {
 	getopts("vqhf:", \%options);
 	if ($options{f}) {
@@ -191,6 +199,7 @@ sub parseopts {
 	}
 }
 
+# print the usage summary for the script
 sub printusage {
 
 	print "\nUpdate firewall Bad Country options:\n";
@@ -200,3 +209,5 @@ sub printusage {
 	print "-f : specify firewall type, can be ipfw, pf, iptables or ipset (ipset is recommended if using iptables)\n\n";
 
 }
+
+### END OF PROGRAM ###
