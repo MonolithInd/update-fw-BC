@@ -1,15 +1,21 @@
 #!/usr/bin/env perl
 ###################################################################
 ###################################################################
-## update-fw-BC.pl : "Update firewall Bad Countries" This is a 
-## short dirty perl script to update an IPFW to block all 
-## connections from countries selected by the user that are known
-## for hacking. It takes one file as input in the CWD dir: 
-## "ip_lists.txt" which is a file containing a link to files on
-## ipdeny.com per line. For each IP list it grabbs the list 
-## (a list of CIDR addressed per line) Ingests them, sorts the 
-## list and then aggrigates networks where posible using 
-## Net::Netmask. It then inserts these IPs into a IPFW table.
+## update-fw-BC.pl : "Update firewall Bad Countries" This is a perl 
+## script to easily insert rules into a firewall. The purpose is to 
+## block all connections from countries selected by the user that 
+## are known for hacking.
+##
+## It takes one file as input in the CWD dir: "ip_lists.txt" which 
+## is a file containing links to files on ipdeny.com per line. 
+## These files are aggrigated lists of netblocks known to be in 
+## that country.
+##
+## For each link it grabs the list, ingests it, sorts the netblocks 
+## and then aggrigates them again where posible using Net::Netmask. 
+## It then inserts these IPs into a firewall.
+##
+## Currently supported is : IPFW, PF, IPTABLES, IPTABLES+IPSET
 ##
 ## It is up to the user to have a rule that points to the table 
 ## in your firewall. In IPFW it's a number. in PF a name.
