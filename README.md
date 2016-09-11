@@ -6,7 +6,7 @@ is to block all connections from countries selected by the
 user that are known for hacking. 
 
 It takes one file as input in the CWD dir: "ip_lists.txt" 
-which is a file containing a links to files on
+which is a file containing links to files on
 ipdeny.com per line. These files are aggrigated lists
 of netblocks known to be in that country.
 
