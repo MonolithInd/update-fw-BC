@@ -142,11 +142,17 @@ Update firewall Bad Country options:
 * -q : Quiet mode, disable all standard output. Used for running from CRON.
 * -f : specify firewall type, can be ipfw, pf, iptables or ipset
 
-example on Freebsd with PF:
+If the scripts doesn't run out of the box on your system there are a few
+things you can check:
+* Make sure your firewall command is where the script expects it to be. If not you can edit the script. The paths for each of the firewall types are defined as variables at the top of the script.
+* If the script doens't run at all make sure you have PERL installed and the script is refrenceing the right path for the binary.
+* If you're having any other major problems don't hesitate to contact me on the address below. 
+
+example running on Freebsd with PF:
 
 * ./update-fw-BC.pl -f pf
 
-example of running from cron daily a2 2am with IPFW
+example of running from cron daily at 2am with IPFW
 
 * 0 2 * * * PATHTOPROGRAM/update-fw-BC.pl -q -f ipfw
 
