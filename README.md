@@ -38,20 +38,20 @@ how to add these required block entry for your firewall package. The reader
 will have to make these entries static across reboots (PF does by default in pf.conf)
 
 <b>IPFW:</B></br>
-Default rule table is 1. Your firewall rules shoud be of the format:
+Default table number is 1. Your firewall rules shoud be of the format:
 
 * ipfw -q RULENUM add deny ip from table\\(1\\) to any
 * ipfw -q RULENUM add deny ip from any to table\\(1\\)
 
-...choose your own number for "RULENUM". 
+...choose your own rule number for "RULENUM". The rule number is different to the table number.
+The table number is a table for storing the IP's. The rule number the the rule that points at the table. 
 
-I recommend using 00001 to make sure it's always matched first. 
+I recommend using rule nunber 00001 to make sure it's always matched first. 
 
 Please note: using "\" to escape the prenthesis "()" is important. 
 
-If you're already using table 1 adjust as required. Do not forget to
-change the table number variable
-in the script itself. 
+If you're already using table 1 for somethng else, adjust as required, but do not forget to
+change the table number variable in the script itself. 
 
 Making the rule perminent
 across reboots is left as an exercise for the reader. 
