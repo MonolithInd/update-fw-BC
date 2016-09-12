@@ -161,6 +161,14 @@ example of running from cron daily at 2am with IPFW
 
 * 0 2 * * * PATHTOPROGRAM/update-fw-BC.pl -q -f ipfw
 
+You can verify that the insertion worked in the following way: 
+
+* IPFW : "ipfw table 1 list"
+* PF : "pfctl -t badcountries -T show"
+* IPTABLES : "iptables -L"
+* IPSET : "ipset list badcountries"
+
+
 5.0 OTHER INFO
 -------------- 
 * v1.0 : Basic ipfw support
