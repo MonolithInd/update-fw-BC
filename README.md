@@ -20,7 +20,7 @@ Currently supported is : IPFW, PF, IPTABLES, IPTABLES+IPSET
 -------------------------
 Included in the package is an example file ip_lists.txt. 
 
-The script graps each list in the text file (you can add your own from: http://ipdeny.com/ipblocks/
+The script grabs each list in the text file (you can add your own from: http://ipdeny.com/ipblocks/
 
 Just copy the aggrigated zones link and paste  it into a line in the file. 
 
