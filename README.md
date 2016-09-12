@@ -38,19 +38,19 @@ how to add these required block entry for your firewall package. The reader
 will have to make these entries static across reboots (PF does by default in pf.conf)
 
 <b>IPFW:</B></br>
-Default table number is 1. Your firewall rules shoud be of the format:
+Default "table number" is 1. Your firewall rules shoud be of the format:
 
 * ipfw -q RULENUM add deny ip from table\\(1\\) to any
 * ipfw -q RULENUM add deny ip from any to table\\(1\\)
 
-...choose your own rule number for "RULENUM". The rule number is different to the table number.
-The table number is a table for storing the IP's. The rule number the the rule that points at the table. 
+...choose your own "rule number" for "RULENUM". Note : the rule number is different to the table number.
+The "table number" (in this case "1") is a table refrence for storing the bad IP's. The "rule number" the the rule that points at this table. 
 
-I recommend using rule nunber 00001 to make sure it's always matched first. 
+I recommend using rule nunber 00001 to make sure it's always the first rule and matched first. 
 
 Please note: using "\" to escape the prenthesis "()" is important. 
 
-If you're already using table 1 for somethng else, adjust as required, but do not forget to
+If you're already using table 1 for something else, adjust as required, but do not forget to
 change the table number variable in the script itself. 
 
 Making the rule perminent
@@ -63,7 +63,8 @@ Add following to pf.conf (default name is badcountries) :
 * block on INTERFACE from \<badcountries\> to any
 * block on INTERFACE from any to \<badcountries\>
 
-make sure you repalce INTERFACE with your correct network interface name.
+Make sure you repalce INTERFACE with your correct network interface name. Putting this in pf.conf should 
+make it static across reboots. 
 
 <b>IPTABLES:</b></br>
 NOTE: using stock iptables is exceedingly slow to update chains and
@@ -76,8 +77,9 @@ This is due to the the way chains work that would requite 2 x rules for each cou
 IPtables already struggles with lists this big. If you want both in and out 
 blocking see "ipset" below.
 
-The following syntax creates the chain, adds it to the input filter and
-sets it to deny. Default chain name is badcountries.
+In IP tables we create a custom "chain and put the block commands in there. Then simply point at the chain from the default INPUT chain which matches all inbpund packets. The block command itself is inserted by the script as part of insertion into the custom chain.
+
+The following syntax creates the chain, adds it to the input filter. Default chain name is badcountries.
 
 * iptables -N badcountries
 * iptables -A INPUT -j badcountries
@@ -102,6 +104,8 @@ Then add your in and outbound rules to iptables:
 
 * iptables -A INPUT -m set --match-set badcountries src -j DROP 
 * iptables -A OUTPUT -m set --match-set badcountries dst -j DROP
+
+Note that in this scenario the ipset memory list is just a list of IPs the match and the drop command is inserted as a line into the INPUT and OUTPUT chains explicitly. 
 
 It is up to the reader to make these last across reboots. 
 
