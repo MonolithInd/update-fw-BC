@@ -34,7 +34,8 @@ This script only creates a table and fills it with IP address blocks
 It is up to the user to have a perminent rule that points to 
 the table in your firewall. In IPFW the table is a number, in PF a name, in 
 iptables it's either a named chain or a set. See below for examples on 
-how to add the block entry for your firewall package. 
+how to add these required block entry for your firewall package. The reader
+will have to make these entries static across reboots (PF does by dafault in pf.conf)
 
 IPFW:
 Rule table default is 1. Your firewall rules shoud be of the format:
