@@ -37,7 +37,7 @@ iptables it's either a named chain or a set. See below for examples on
 how to add these required block entry for your firewall package. The reader
 will have to make these entries static across reboots (PF does by default in pf.conf)
 
-IPFW:
+<b>IPFW:</B></br>
 Rule table default is 1. Your firewall rules shoud be of the format:
 
 * ipfw -q RULENUM add deny ip from table\\(1\\) to any
@@ -56,7 +56,7 @@ in the script itself.
 Making the rule perminent
 across reboots is left as an exercise for the reader. 
 
-PF:
+<b>PF:</b> </br>
 Add following to pf.conf (default name is badcountries) :
 
 * table \<badcountries\> persist
@@ -65,7 +65,7 @@ Add following to pf.conf (default name is badcountries) :
 
 make sure you repalce INTERFACE with your correct network interface name.
 
-IPTABLES:
+<b>IPTABLES:</b></br>
 NOTE: using stock iptables is exceedingly slow to update chains and
 large chains can have exceedingly high impact on system performance. 
 If using Linux+iptalbles it is HIGHLY reccomended you install and use 
@@ -86,7 +86,7 @@ PLEASE NOTE: Rules insertion takes a really long time on linux
 (because iptables is crap). Script may take 10+  min or more to run 
 with large lists of countries and IP blocks. 
 
-IPSET:
+<b>IPSET:</b></br>
 ipset is an extension to iptables that allows you to create an in memory
 hash of IP addresses of arbitrary size that iptables can refrence. It is not 
 a firewall in it's own right but rather a store of addresses for iptables
