@@ -38,7 +38,7 @@ how to add these required block entry for your firewall package. The reader
 will have to make these entries static across reboots (PF does by default in pf.conf)
 
 <b>IPFW:</B></br>
-Rule table default is 1. Your firewall rules shoud be of the format:
+Default rule table is 1. Your firewall rules shoud be of the format:
 
 * ipfw -q RULENUM add deny ip from table\\(1\\) to any
 * ipfw -q RULENUM add deny ip from any to table\\(1\\)
@@ -47,7 +47,7 @@ Rule table default is 1. Your firewall rules shoud be of the format:
 
 I recommend using 00001 to make sure it's always matched first. 
 
-Please note: escaping the "()" is important. 
+Please note: using "/\" to escape the prenthesis "()" is important. 
 
 If you're already using table 1 adjust as required. Do not forget to
 change the table number variable
