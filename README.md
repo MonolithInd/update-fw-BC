@@ -30,7 +30,7 @@ hacking countries source lists.
 
 2.0 FIREWALL REQUIREMENTS
 -------------------------
-This script only creates a table and fills it with IP address blocks
+This script only creates a table and fills it with IP address blocks.
 It is up to the user to have a perminent rule that points to 
 the table in your firewall. In IPFW the table is a number, in PF a name, in 
 iptables it's either a named chain or a set. See below for examples on 
