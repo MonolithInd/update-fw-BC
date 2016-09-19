@@ -44,7 +44,7 @@ Default "table number" is 1. Your firewall rules shoud be of the format:
 * ipfw -q RULENUM add deny ip from any to table\\(1\\)
 
 ...choose your own "rule number" for "RULENUM". Note : the rule number is different to the table number.
-The "table number" (in this case "1") is a table refrence for storing the bad IP's. The "rule number" the the rule that points at this table. 
+The "table number" (in this case "1") is a table refrence for storing the bad IP's. The "rule number" is the rule that points at this table, lower numbers are higher up in the firewall. 
 
 I recommend using rule nunber 00001 to make sure it's always the first rule and matched first. 
 
