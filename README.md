@@ -133,7 +133,7 @@ It is assumed the user already has PERL installed.
 
 UBUNTU: 
 * apt-get install libnet-netmask-perl
-* LWP is usually already installed by default. 
+* LWP is usually already installed by default, if not "apt-get install libwww-perl" 
 
 If using ipset (highly recommended)
 * apt-get install ipset
