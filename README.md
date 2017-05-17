@@ -14,7 +14,7 @@ For each link it grabs the list, ingests it, sorts the
 netblocks and then aggrigates them again where posible using 
 Net::Netmask. It then inserts these IPs into a firewall.
 
-Currently supported is : IPFW, PF, IPTABLES, IPTABLES+IPSET
+Currently supported is : IPFW, PF, IPTABLES, IPTABLES+IPSET, NFTABLES
 
 1.0 SETTING UP YOUR LISTS
 -------------------------
