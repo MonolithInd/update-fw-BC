@@ -88,6 +88,24 @@ PLEASE NOTE: Rules insertion takes a really long time on linux
 (because iptables is crap). Script may take 10+  min or more to run 
 with large lists of countries and IP blocks. 
 
+<b>NFTABLES</b></br>
+Nftables has the concept of "sets" like IPSET built into the base firewall package. As such we can create a set as part of the tables and refer to it in rules. 
+
+In nftables we create a custom set called "country_block" and place the full IP list of the bad countries in this set. To creater this set see the command below. 
+
+nft add set filter country_block { type ipv4_addr \; flags interval \;}
+
+Once the set is created we can run the script with -f nftables and the set it populated. Unlike iptables/ipset this set is displayed as part of the ruleset when it is listed. Be prepared for a long list of IPs. Once created and populated the set can be refrenced anywhere in your nftables rules. as an example: 
+
+chain input {
+		type filter hook input priority 0; policy accept;
+		ip saddr @country_block counter packets 3196 bytes 133169 drop
+}
+
+Note, to increase speed the nftables script creates a file, writes the IPs to the file then injects the file into the nftables set. Rather than adding the items line by line which is slow. As such the script will need to run as a user with access to /tmp for the file creation and deletion during set loading. 
+
+Making these firewall changes static across reboots is left as an exercise for the reader. 
+
 <b>IPSET:</b></br>
 ipset is an extension to iptables that allows you to create an in memory
 hash of IP addresses of arbitrary size that iptables can refrence. It is not 
@@ -133,7 +151,7 @@ It is assumed the user already has PERL installed.
 
 UBUNTU: 
 * apt-get install libnet-netmask-perl
-* LWP is usually already installed by default, if not "apt-get install libwww-perl" 
+* LWP is usually already installed by default. 
 
 If using ipset (highly recommended)
 * apt-get install ipset

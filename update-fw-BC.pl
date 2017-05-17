@@ -26,6 +26,7 @@
 ## v1.0 : Basic ipfw support
 ## v1.1 : Added pf and iptables support
 ## v1.2 : Added ipset support
+## v1.3 : Added nftables support
 ## 
 ## Written by Sebastian Kai Frost. sebastian.kai.frost@gmail.com
 ##
@@ -37,7 +38,7 @@ use Getopt::Std;
 use Net::Netmask; 
 
 # set base varaibles. 
-my $version = "v1.2";
+my $version = "v1.3";
 # where to find the ip_lists.txt file. If running this from CRON this should be a 
 # full path to the file or it might not work.
 my $ipLists = "ip_lists.txt";
@@ -47,9 +48,17 @@ my $ipfwpath = "/sbin";
 my $iptablespath = "/sbin";
 my $pfpath = "/sbin";
 my $ipsetpath = "/sbin";
+my $nftpath = "/usr/sbin/";
 # below is the tables/chain you're inserting the rules into. You must refrence 
 # this table in a rule somewhere in yoyr firewall or the script does nothing. 
 my $ipfwtable = 1;
+my %supportedFW = (
+	"ipfw" => 1,
+       	"ipset" => 1,
+       	"pf" => 1,
+       	"iptables" => 1,
+       	"nftables" => 1
+	);
 my $pftable = "badcountries";
 my $iptableschain = "badcountries";
 my $quiet = 0;
@@ -65,6 +74,7 @@ my $aftercount;
 my @tempblocks;
 my @ipblocks;
 my @ipblockOBJ;
+my $fh;
 my $ip;
 my $mask;
 
@@ -74,8 +84,17 @@ parseopts();
 print "\n*** Update firewall Bad Country $version ***\n\n" unless ($quiet); 
 
 unless ($firewall) {
-	print "No firewall specified, defaulting to IPFW\n\n" unless ($quiet);
-	$firewall = "ipfw";
+	print "No firewall specified, please specify your firewall package\n\n" unless ($quiet);
+	printusage();
+	exit(1);
+}
+
+unless(exists($supportedFW{$firewall})) {
+	print "Unsupported firewall type \"$firewall\" specified, please specify one of: ";
+	print "$_ " for keys %supportedFW;
+	print "\n";
+	printusage();
+	exit(1);
 }
 
 print "Updateing firewall - $firewall\n" unless ($quiet);
@@ -121,7 +140,7 @@ print "  -- Done\n" unless ($quiet);
 print "  -- Networks before/after aggrigation : $beforecount/$aftercount\n" unless ($quiet);
 
 # lets finally go update our firewall.
-print "-- Updateing firewall...\n" unless ($quiet);
+print "-- Updating firewall...\n" unless ($quiet);
 
 # flush out the old list.
 print "  -- Flushing old rules...\n" unless ($quiet);
@@ -133,6 +152,8 @@ if ($firewall eq "ipfw") {
 	system "$iptablespath/iptables -F $iptableschain";
 } elsif ($firewall eq "ipset") {
 	system "$ipsetpath/ipset flush $iptableschain";
+} elsif ($firewall eq "nftables") {
+	system "$nftpath/nft flush set filter country_block";
 } else {
 	print "Unknown firewall type\n";
 	exit(1);
@@ -143,6 +164,10 @@ print "  -- Done\n" unless ($quiet);
 # as this can take a long time. Also a spinning wheel so if they manage to firewall themselves
 # out they will see this pretty quickly. 
 $count = 1;
+if ($firewall eq "nftables") {
+	open ($fh, ">", "/tmp/nft.rules");
+	print $fh "add element filter country_block {";
+}
 foreach (@ipblockOBJ) {
 	$ip = $_->base();
 	$mask = $_->bits();
@@ -154,6 +179,8 @@ foreach (@ipblockOBJ) {
 		system("$iptablespath/iptables -A $iptableschain -s $ip/$mask -j DROP");
 	} elsif ($firewall eq "ipset") {
 		system("$ipsetpath/ipset add $iptableschain $ip/$mask");
+	} elsif ($firewall eq "nftables") {
+		print $fh "$ip/$mask, ";
 	} else {
 		print "Unknown firewall type\n";
 		exit(1);
@@ -161,7 +188,12 @@ foreach (@ipblockOBJ) {
 	progress_bar( $count, $aftercount, 25, '=' );
 	$count++;
 }
-
+if ($firewall eq "nftables") {
+	print $fh "}\n";
+	close $fh;
+	system "$nftpath/nft -f /tmp/nft.rules";
+	unlink "/tmp/nft.rules";
+}
 print "\n" unless ($quiet);
 print "  -- Done\n" unless ($quiet);
 print "------------------------\n" unless ($quiet);
@@ -212,7 +244,7 @@ sub printusage {
 	print "-h : This help\n";
 	print "-v : Print version info\n";
 	print "-q : Quiet mode, disable all standard output. Used for running from CRON.\n";
-	print "-f : specify firewall type, can be ipfw, pf, iptables or ipset (ipset is recommended if using iptables)\n\n";
+	print "-f : specify firewall type, can be ipfw, pf, iptables, nftables or ipset (ipset is recommended if using iptables)\n\n";
 
 }
 
