@@ -192,6 +192,7 @@ You can verify that the insertion worked in the following way:
 * v1.0 : Basic ipfw support
 * v1.1 : Added pf and iptables support
 * v1.2 : Added ipset support
+* v1.3 : Added nftables support
 
 6.0 DISCLAIMER
 --------------
