@@ -185,7 +185,7 @@ You can verify that the insertion worked in the following way:
 * PF : "pfctl -t badcountries -T show"
 * IPTABLES : "iptables -L"
 * IPSET : "ipset list badcountries"
-
+* NFTABLES : "nft list set filter country_block"
 
 5.0 OTHER INFO
 -------------- 
