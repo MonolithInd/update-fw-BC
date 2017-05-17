@@ -99,7 +99,7 @@ Once the set is created we can run the script with -f nftables and the set it po
 
 chain input {
 		type filter hook input priority 0; policy accept;
-		ip saddr @country_block counter packets 3196 bytes 133169 drop
+		ip saddr @country_block counter drop
 }
 
 Note, to increase speed the nftables script creates a file, writes the IPs to the file then injects the file into the nftables set. Rather than adding the items line by line which is slow. As such the script will need to run as a user with access to /tmp for the file creation and deletion during set loading. 
