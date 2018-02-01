@@ -1,33 +1,33 @@
 #!/usr/bin/env perl
 ###################################################################
 ###################################################################
-## update-fw-BC.pl : "Update firewall Bad Countries" This is a perl 
-## script to easily insert rules into a firewall. The purpose is to 
-## block all connections from countries selected by the user that 
+## update-fw-BC.pl : "Update firewall Bad Countries" This is a perl
+## script to easily insert rules into a firewall. The purpose is to
+## block all connections from countries selected by the user that
 ## are known for hacking.
 ##
-## It takes one file as input in the CWD dir: "ip_lists.txt" which 
-## is a file containing links to files on ipdeny.com per line. 
-## These files are aggrigated lists of netblocks known to be in 
+## It takes one file as input in the CWD dir: "ip_lists.txt" which
+## is a file containing links to files on ipdeny.com per line.
+## These files are aggregated lists of netblocks known to be in
 ## that country.
 ##
-## For each link it grabs the list, ingests it, sorts the netblocks 
-## and then aggrigates them again where posible using Net::Netmask. 
+## For each link it grabs the list, ingests it, sorts the netblocks
+## and then aggregates them again where posible using Net::Netmask.
 ## It then inserts these IPs into a firewall.
 ##
-## Currently supported is : IPFW, PF, IPTABLES, IPTABLES+IPSET
+## Currently supported are : IPFW, PF, IPTABLES, IPTABLES+IPSET
 ##
-## It is up to the user to have a rule that points to the table 
+## It is up to the user to have a rule that points to the table
 ## in your firewall. In IPFW it's a number. in PF a name.
-## 
+##
 ## PLEASE READ THE README FILE FOR HOW TO RUN AND REQUIRED
 ## FW RULES AND LIBRARIES
-## 
+##
 ## v1.0 : Basic ipfw support
 ## v1.1 : Added pf and iptables support
 ## v1.2 : Added ipset support
 ## v1.3 : Added nftables support
-## 
+##
 ## Written by Sebastian Kai Frost. sebastian.kai.frost@gmail.com
 ##
 
@@ -35,22 +35,22 @@ use strict;
 use warnings;
 use LWP::Simple;
 use Getopt::Std;
-use Net::Netmask; 
+use Net::Netmask;
 
-# set base varaibles. 
+# set base varaibles.
 my $version = "v1.3";
-# where to find the ip_lists.txt file. If running this from CRON this should be a 
+# where to find the ip_lists.txt file. If running this from CRON this should be a
 # full path to the file or it might not work.
 my $ipLists = "ip_lists.txt";
 # Below are the paths for IPFW, PF, iptables and ipset. These are the defaults on
-# modern systems. If yours is in another place. Adjust accordingly. 
+# modern systems. If yours is in another place. Adjust accordingly.
 my $ipfwpath = "/sbin";
 my $iptablespath = "/sbin";
 my $pfpath = "/sbin";
 my $ipsetpath = "/sbin";
 my $nftpath = "/usr/sbin/";
-# below is the tables/chain you're inserting the rules into. You must refrence 
-# this table in a rule somewhere in yoyr firewall or the script does nothing. 
+# below is the tables/chain you're inserting the rules into. You must refrence
+# this table in a rule somewhere in yoyr firewall or the script does nothing.
 my $ipfwtable = 1;
 my %supportedFW = (
 	"ipfw" => 1,
@@ -78,10 +78,10 @@ my $fh;
 my $ip;
 my $mask;
 
-# Lets parse our command line options. 
+# Lets parse our command line options.
 parseopts();
 
-print "\n*** Update firewall Bad Country $version ***\n\n" unless ($quiet); 
+print "\n*** Update firewall Bad Country $version ***\n\n" unless ($quiet);
 
 unless ($firewall) {
 	print "No firewall specified, please specify your firewall package\n\n" unless ($quiet);
@@ -104,40 +104,40 @@ print "-- Grabbing IP Lists and extracting IP blocks...\n" unless ($quiet);
 
 open($listsFH, '<:encoding(UTF-8)', $ipLists) or die "Could not open file '$ipLists' $!";
 
-# run through each of the URLs of IP blocks and grab them, then shove each IP block in 
-# an array. 
+# run through each of the URLs of IP blocks and grab them, then shove each IP block in
+# an array.
 while ($row = <$listsFH>) {
 	chomp $row;
 	$content = get($row) or die 'Unable to get page';
 	@tempblocks = split(/\n/, $content);
 	foreach (@tempblocks) {
 		push @ipblocks, $_;
-	}	
+	}
 }
 close $listsFH;
 
 print "  -- Done\n" unless ($quiet);
 
-# sort the array into an ordered list. I don't specifically know that net::netmask requires 
-# the blocks to be adjacent to merge. But lets not risk it. 
+# sort the array into an ordered list. I don't specifically know that net::netmask requires
+# the blocks to be adjacent to merge. But lets not risk it.
 @ipblocks = sort(@ipblocks);
 
-# count how many networks we have to start with so we can compare with after and feel good about 
+# count how many networks we have to start with so we can compare with after and feel good about
 # our efficiency.
 $beforecount = @ipblocks;
 
-# create an array of Net::Netmask objects for it to work with. 
+# create an array of Net::Netmask objects for it to work with.
 foreach (@ipblocks) {
 	push @ipblockOBJ, Net::Netmask->new($_);
 }
 
-print "-- Aggrigating networks...\n" unless ($quiet);
-# aggrigate the networks using cidrs2cidrs 
+print "-- Aggregating networks...\n" unless ($quiet);
+# aggregate the networks using cidrs2cidrs
 @ipblockOBJ = cidrs2cidrs(@ipblockOBJ);
 # count how many we have now. Look how shiny Net::Netmask is!
 $aftercount = @ipblockOBJ;
 print "  -- Done\n" unless ($quiet);
-print "  -- Networks before/after aggrigation : $beforecount/$aftercount\n" unless ($quiet);
+print "  -- Networks before/after aggregation : $beforecount/$aftercount\n" unless ($quiet);
 
 # lets finally go update our firewall.
 print "-- Updating firewall...\n" unless ($quiet);
@@ -162,7 +162,7 @@ print "  -- Done\n" unless ($quiet);
 
 # go through and put in the new rules. Lets give the user a nice progress bar to go with it
 # as this can take a long time. Also a spinning wheel so if they manage to firewall themselves
-# out they will see this pretty quickly. 
+# out they will see this pretty quickly.
 $count = 1;
 if ($firewall eq "nftables") {
 	open ($fh, ">", "/tmp/nft.rules");
@@ -203,7 +203,7 @@ exit(0);
 
 ### END OF MAIN SCRIPT SUBS BELOW
 
-# cute little sub I use everywhere for fancy progress bars. 
+# cute little sub I use everywhere for fancy progress bars.
 sub progress_bar {
 	my ( $got, $total, $width, $char ) = @_;
 	my $spin = 0;
@@ -218,7 +218,7 @@ sub progress_bar {
    	$spin++;
 }
 
-# Sub to parse command line options 
+# Sub to parse command line options
 sub parseopts {
 	getopts("vqhf:", \%options);
 	if ($options{f}) {
