@@ -37,7 +37,7 @@ use LWP::Simple;
 use Getopt::Std;
 use Net::Netmask;
 
-# set base varaibles.
+# set base variables.
 my $version = "v1.3";
 # where to find the ip_lists.txt file. If running this from CRON this should be a
 # full path to the file or it might not work.
