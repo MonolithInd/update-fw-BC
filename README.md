@@ -76,7 +76,7 @@ This is due to the the way chains work that would require 2 x rules for each cou
 IPtables already struggles with lists this big. If you want both in and out
 blocking see "ipset" below.
 
-In iptables we create a custom chain and put the block commands in there. Then simply point at the chain from the default INPUT chain which matches all inbpund packets. The block command itself is inserted by the script as part of insertion into the custom chain.
+In iptables we create a custom chain and put the block commands in there. Then simply point at the chain from the default INPUT chain which matches all inbound packets. The block command itself is inserted by the script as part of insertion into the custom chain.
 
 The following syntax creates the chain, adds it to the input filter. Default chain name is badcountries.
 
@@ -90,18 +90,18 @@ with large lists of countries and IP blocks.
 <b>NFTABLES</b></br>
 Nftables has the concept of "sets" like IPSET built into the base firewall package. As such we can create a set as part of the tables and refer to it in rules.
 
-In nftables we create a custom set called "country_block" and place the full IP list of the bad countries in this set. To creater this set see the command below.
+In nftables we create a custom set called "country_block" and place the full IP list of the bad countries in this set. To create this set see the command below.
 
     nft add set filter country_block { type ipv4_addr \; flags interval \;}
 
-Once the set is created we can run the script with -f nftables and the set it populated. Unlike iptables/ipset this set is displayed as part of the ruleset when it is listed. Be prepared for a long list of IPs. Once created and populated the set can be referenced anywhere in your nftables rules. As an example:
+Once the set is created we can run the script with -f nftables and the set is populated. Unlike iptables/ipset this set is displayed as part of the ruleset when it is listed. Be prepared for a long list of IPs. Once created and populated the set can be referenced anywhere in your nftables rules. As an example:
 
     chain input {
 		type filter hook input priority 0; policy accept;
 		ip saddr @country_block counter drop
     }
 
-Note, to increase speed the nftables script creates a file, writes the IPs to the file then injects the file into the nftables set. Rather than adding the items line by line which is slow. As such the script will need to run as a user with access to /tmp for the file creation and deletion during set loading.
+Note, to increase speed when run for nftables the script creates a file, writes the IPs to the file then injects the file into the nftables set. Rather than adding the items line by line which I have found is slow. As such the script will need to run as a user with access to /tmp for the file creation and deletion during set loading.
 
 Making these firewall changes static across reboots is left as an exercise for the reader.
 
@@ -109,7 +109,7 @@ Making these firewall changes static across reboots is left as an exercise for t
 ipset is an extension to iptables that allows you to create an in memory
 hash of IP addresses of arbitrary size that iptables can refrence. It is not
 a firewall in its own right but rather a store of addresses for iptables
-use. To install ipset on ubuntu:
+to use. To install ipset on ubuntu:
 
     apt-get install ipset
 
@@ -166,6 +166,7 @@ If using ipset (highly recommended):
 REDHAT variants:
 
 You may need to install Net::Netmask:
+
     yum install perl-Net-Netmask.noarch
 
 
@@ -177,7 +178,8 @@ Update firewall Bad Country options:
     -h : This help
     -v : Print version info
     -q : Quiet mode, disable all standard output. Used for running from CRON.
-    -f : specify firewall type, can be ipfw, pf, iptables or ipset
+    -f : specify firewall type, can be ipfw, pf, iptables, nftables or ipset (ipset is recommended if using iptables)
+    -l : specify an IP lists file to import your own IP list. See README for format
 
 If the scripts don't run out of the box on your system there are a few
 things you can check:
@@ -201,12 +203,19 @@ You can verify that the insertion worked in the following way:
 * IPSET: "ipset list badcountries"
 * NFTABLES: "nft list set filter country_block"
 
+As of version 1.4 I have added the option to specify your own list of IP addresses for the script to import. There is an example file in the package but it must be of the format:
+
+    x.x.x.x/xx 
+    
+With one IP of the above format per line. Similar to the lists from IPdeny. Currently the script does NO vlaidation on your IP addresses before trying to import them, so as it stands if you mi-type it will just silently fail. I will fix this in a new version soon. It's about time for a total re-write to make it not messy anyway. 
+
 5.0 OTHER INFO
 --------------
 * v1.0 : Basic ipfw support
 * v1.1 : Added pf and iptables support
 * v1.2 : Added ipset support
 * v1.3 : Added nftables support
+* v1.4 : Added support for user specified IP list files.
 
 6.0 DISCLAIMER
 --------------
