@@ -27,6 +27,7 @@
 ## v1.1 : Added pf and iptables support
 ## v1.2 : Added ipset support
 ## v1.3 : Added nftables support
+## v1.4 : Added support for user IP lists.
 ##
 ## Written by Sebastian Kai Frost. sebastian.kai.frost@gmail.com
 ##
@@ -36,12 +37,14 @@ use warnings;
 use LWP::Simple;
 use Getopt::Std;
 use Net::Netmask;
+use Data::Dumper;
 
 # set base variables.
-my $version = "v1.3";
+my $version = "v1.4";
 # where to find the ip_lists.txt file. If running this from CRON this should be a
 # full path to the file or it might not work.
 my $ipLists = "ip_lists.txt";
+my $userList = "";
 # Below are the paths for IPFW, PF, iptables and ipset. These are the defaults on
 # modern systems. If yours is in another place. Adjust accordingly.
 my $ipfwpath = "/sbin";
@@ -102,19 +105,29 @@ print "------------------\n" unless ($quiet);
 
 print "-- Grabbing IP Lists and extracting IP blocks...\n" unless ($quiet);
 
-open($listsFH, '<:encoding(UTF-8)', $ipLists) or die "Could not open file '$ipLists' $!";
-
-# run through each of the URLs of IP blocks and grab them, then shove each IP block in
-# an array.
-while ($row = <$listsFH>) {
-	chomp $row;
-	$content = get($row) or die 'Unable to get page';
-	@tempblocks = split(/\n/, $content);
-	foreach (@tempblocks) {
-		push @ipblocks, $_;
+if ($userList) {
+	print "---- Using user supplied IP list.\n";
+	open(my $fh, '<:encoding(UTF-8)', $userList) or die "Could not open file '$userList' $!";
+	while ($row = <$fh>) {
+		chomp $row;
+		push @ipblocks, $row;
 	}
+} else {
+
+	open($listsFH, '<:encoding(UTF-8)', $ipLists) or die "Could not open file '$ipLists' $!";
+
+	# run through each of the URLs of IP blocks and grab them, then shove each IP block in
+	# an array.
+	while ($row = <$listsFH>) {
+		chomp $row;
+		$content = get($row) or die 'Unable to get page';
+		@tempblocks = split(/\n/, $content);
+		foreach (@tempblocks) {
+			push @ipblocks, $_;
+		}
+	}
+	close $listsFH;
 }
-close $listsFH;
 
 print "  -- Done\n" unless ($quiet);
 
@@ -220,9 +233,12 @@ sub progress_bar {
 
 # Sub to parse command line options
 sub parseopts {
-	getopts("vqhf:", \%options);
+	getopts("vqhl:f:", \%options);
 	if ($options{f}) {
 		$firewall = $options{f};
+	}
+	if ($options{l}) {
+		$userList = $options{l};
 	}
 	if ($options{q}) {
 		$quiet = 1;
@@ -244,7 +260,8 @@ sub printusage {
 	print "-h : This help\n";
 	print "-v : Print version info\n";
 	print "-q : Quiet mode, disable all standard output. Used for running from CRON.\n";
-	print "-f : specify firewall type, can be ipfw, pf, iptables, nftables or ipset (ipset is recommended if using iptables)\n\n";
+	print "-f : specify firewall type, can be ipfw, pf, iptables, nftables or ipset (ipset is recommended if using iptables)\n";
+	print "-l : specify an IP lists file to import your own IP list. See README for format\n\n";
 
 }
 
