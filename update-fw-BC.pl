@@ -90,10 +90,13 @@ sub parseUserList {
 	print "-- Using user supplied IP list.\n";
 	open($fh, '<:encoding(UTF-8)', $userList) or die "Could not open file '$userList' $!";
 	while ($row = <$fh>) {
-		chomp $row;
-		$ip = (split("/", $row))[0];
-		verifyIP($ip);
-		push @blocks, Net::Netmask->new($row);
+		# ignore commented rows
+		unless ($row =~ m/^#/) {
+			chomp $row;
+			$ip = (split("/", $row))[0];
+			verifyIP($ip);
+			push @blocks, Net::Netmask->new($row);
+		}
 	}
 	print "  -- Done\n" unless ($quiet);
 	return @blocks;
