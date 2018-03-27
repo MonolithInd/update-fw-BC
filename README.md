@@ -5,10 +5,9 @@ short perl script to insert rules into a firewall. The purpose
 is to block all connections from countries selected by the
 user that are known for hacking.
 
-It takes one file as input in the CWD dir: "ip_lists.txt"
-which is a file containing links to files on
-ipdeny.com per line. These files are aggregated lists
-of netblocks known to be in that country.
+It either takes 
+* one file as input in the CWD dir: "ip_lists.txt" which is a file containing links to files on ipdeny.com per line. These files are aggregated lists of netblocks known to be in that country.
+* a user supplied file containing one IP address/netmask entry per line in the format x.x.x.x/xx
 
 For each link it grabs the list, ingests it, sorts the
 netblocks and then aggregates them again where posible using
