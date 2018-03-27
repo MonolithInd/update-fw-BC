@@ -9,9 +9,7 @@ It either takes
 * one file as input in the CWD dir: "ip_lists.txt" which is a file containing links to files on ipdeny.com per line. These files are aggregated lists of netblocks known to be in that country.
 * a user supplied file containing one IP address/netmask entry per line in the format x.x.x.x/xx
 
-For each link it grabs the list, ingests it, sorts the
-netblocks and then aggregates them again where posible using
-Net::Netmask. It then inserts these IPs into a firewall.
+For each link it grabs the list, ingests it, sorts the netblocks, verifies the IPs are valid, and then aggregates them again where posible using Net::Netmask. It then inserts these IPs into a firewall.
 
 Currently supported is : IPFW, PF, IPTABLES, IPTABLES+IPSET, NFTABLES
 
@@ -174,11 +172,12 @@ You may need to install Net::Netmask:
 
 Update firewall Bad Country options:
 
-    -h : This help
-    -v : Print version info
+    -f : (required) specify firewall type, can be ipfw, pf, iptables, nftables or ipset (ipset is recommended if using iptables)
+    -l : (optional) specify an IP lists file to import your own IP list. See README for format
+    -i : (optional) optional full path to your ip_lists.txt file that defines the URLs to pull IPs from, useful if you run this from cron
     -q : Quiet mode, disable all standard output. Used for running from CRON.
-    -f : specify firewall type, can be ipfw, pf, iptables, nftables or ipset (ipset is recommended if using iptables)
-    -l : specify an IP lists file to import your own IP list. See README for format
+    -v : Print version info
+    -h : This help
 
 If the scripts don't run out of the box on your system there are a few
 things you can check:
@@ -215,6 +214,7 @@ With one IP of the above format per line. Similar to the lists from IPdeny. Curr
 * v1.2 : Added ipset support
 * v1.3 : Added nftables support
 * v1.4 : Added support for user specified IP list files.
+* v1.5 : Re-write to tidy up code significantly, remove globals and add ability to specify location of ip_lists.txt file
 
 6.0 DISCLAIMER
 --------------
